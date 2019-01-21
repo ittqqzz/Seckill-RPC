@@ -1,0 +1,42 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xsi:schemaLocation="http://www.springframework.org/schema/rabbit
+	http://www.springframework.org/schema/rabbit/spring-rabbit-1.4.xsd
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+    <!-- 配置连接工厂 -->
+    <rabbit:connection-factory id="connectionFactory"
+                               host="192.168.245.1" port="5672"
+                               username="guest" password="guest"
+                               virtual-host="/" publisher-confirms="true"
+                               publisher-returns="true" />
+
+    <!-- 定义mq管理 -->
+    <rabbit:admin connection-factory="connectionFactory" />
+
+    <!-- 声明队列 -->
+    <rabbit:queue name="successkilled-queue" auto-declare="true" durable="true" />
+
+    <!-- 定义交换机绑定队列 -->
+    <rabbit:topic-exchange name="successkilled-exchange" id="successkilled-exchange" durable="true">
+        <rabbit:bindings>
+            <rabbit:binding pattern="successkilled.#" queue="successkilled-queue"/>
+        </rabbit:bindings>
+    </rabbit:topic-exchange>
+
+
+    <!-- 消息对象json转换类 -->
+    <bean id="jsonMessageConverter"
+          class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter" />
+
+    <!-- 定义模版 -->
+    <rabbit:template id="rabbitTemplate"
+                     connection-factory="connectionFactory"
+                     exchange="successkilled-exchange"
+                      />
+    <!--
+        message-converter="jsonMessageConverter"
+    -->
+
+</beans>
