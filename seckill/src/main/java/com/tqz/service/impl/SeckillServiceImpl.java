@@ -102,6 +102,7 @@ public class SeckillServiceImpl implements SeckillService {
             System.out.println("======== After sendToExchange start to query seckill status ==========");
             /**
              * TODO RPC远程读取秒杀状态是否合理？
+             * TODO 待优化
              * 用redis缓存秒杀状态？
              */
             SeckillExecution seckillExecution = null;
